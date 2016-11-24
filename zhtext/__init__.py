@@ -5,10 +5,10 @@ import collections
 import re
 import pkg_resources
 
-'''
-Read and construct dictionary of words, with traditional, simplified, pinyin, and definitions
-'''
 def read_dictionary():
+    '''
+    Read and construct dictionary of words, with traditional, simplified, pinyin, and definitions
+    '''
     dict_data = pkg_resources.resource_stream(__name__, 'data/cedict_1_0_ts_utf-8_mdbg.txt')
     dict_re_s = r'(\S+)\s+(\S+)\s+\[(.*)\]\s+/(.*)/'
     dict_re = re.compile(dict_re_s, flags=re.UNICODE)
@@ -25,12 +25,12 @@ def read_dictionary():
             dictionary[entry['simplified']].append(entry)
     return dictionary
 
-'''
-Splits the given string into alternating non-hanzi and hanzi parts. Each part
-will be non-empty, except that the first part will always consist of non-hanzi
-characters (and will be an empty string if the input starts with a hanzi).
-'''
 def split_hanzi_nonhanzi(text):
+    '''
+    Splits the given string into alternating non-hanzi and hanzi parts. Each part
+    will be non-empty, except that the first part will always consist of non-hanzi
+    characters (and will be an empty string if the input starts with a hanzi).
+    '''
     text_parts = []
     current_part = ''
     current_part_is_hanzi = False
@@ -51,22 +51,22 @@ def split_hanzi_nonhanzi(text):
         text_parts.append(current_part)
     return text_parts
 
-'''
-Returns only the parts containing hanzi from the output of split_hanzi_nonhanzi
-'''
 def get_hanzi_parts(text_parts):
+    '''
+    Returns only the parts containing hanzi from the output of split_hanzi_nonhanzi
+    '''
     result = []
     for i, part in enumerate(text_parts):
         if i % 2 == 1:
             result.append(part)
     return result
 
-'''
-Reads the frequencies of the sequence of characters making up each word in the
-dictionary in the given text. This does not attempt to take into account word
-boundaries, just counts the raw frequency of each string.
-'''
 def read_frequencies(dictionary, text_parts):
+    '''
+    Reads the frequencies of the sequence of characters making up each word in the
+    dictionary in the given text. This does not attempt to take into account word
+    boundaries, just counts the raw frequency of each string.
+    '''
     max_word_length = 20
     hanzi_parts = get_hanzi_parts(text_parts)
     frequencies = collections.Counter()
@@ -115,13 +115,13 @@ def split_into_words(dictionary, frequencies, text):
     result.reverse()
     return result
 
-'''
-Segment the parts containing hanzi from the output of split_hanzi_nonhanzi into
-words. The output has the same format as split_hanzi_nonhanzi, except that the
-hanzi parts contain a list of strings which are the words, instead of a single
-string.
-'''
 def segment(dictionary, frequencies, text_parts):
+    '''
+    Segment the parts containing hanzi from the output of split_hanzi_nonhanzi into
+    words. The output has the same format as split_hanzi_nonhanzi, except that the
+    hanzi parts contain a list of strings which are the words, instead of a single
+    string.
+    '''
     segmented_text_parts = []
     for i, part in enumerate(text_parts):
         if i % 2 == 0:
@@ -130,10 +130,10 @@ def segment(dictionary, frequencies, text_parts):
             segmented_text_parts.append(split_into_words(dictionary, frequencies, part))
     return segmented_text_parts
 
-'''
-Returns the words from the output of segment
-'''
 def get_words(segmented_text_parts):
+    '''
+    Returns the words from the output of segment
+    '''
     words = []
     for part in get_hanzi_parts(segmented_text_parts):
         for word in part:
