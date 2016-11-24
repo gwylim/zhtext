@@ -8,6 +8,6 @@ setup(name='zhtext',
       author_email='gwylim.a@gmail.com',
       license='MIT',
       packages=['zhtext'],
-      scripts=['bin/zhsegment'],
+      scripts=['bin/zhsegment', 'bin/zhwordcounts'],
       zip_safe=False,
       data_files=[('zhtext/data', ['zhtext/data/cedict_1_0_ts_utf-8_mdbg.txt'])])

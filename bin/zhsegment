@@ -14,8 +14,8 @@ text_parts = zhtext.split_hanzi_nonhanzi(text)
 dictionary = zhtext.read_dictionary()
 frequencies = zhtext.read_frequencies(dictionary, text_parts)
 
-for i, part in enumerate(text_parts):
+for i, part in enumerate(zhtext.segment(dictionary, frequencies, text_parts)):
     if i % 2 == 0:
         sys.stdout.write(part.encode('utf-8'))
     else:
-        sys.stdout.write(' '.join(zhtext.split_into_words(dictionary, frequencies, part)).encode('utf-8'))
+        sys.stdout.write(' '.join(part).encode('utf-8'))
