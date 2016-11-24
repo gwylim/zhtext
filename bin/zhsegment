@@ -4,7 +4,7 @@ import sys
 import argparse
 import zhtext
 
-parser = argparse.ArgumentParser(description='Process some integers.')
+parser = argparse.ArgumentParser(description='Segments the given chinese text into words.')
 parser.add_argument('file', metavar='FILE', type=argparse.FileType('r'), help='file to segment')
 
 args = parser.parse_args()
