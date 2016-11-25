@@ -51,16 +51,6 @@ def split_hanzi_nonhanzi(text):
         text_parts.append(current_part)
     return text_parts
 
-def get_hanzi_parts(text_parts):
-    '''
-    Returns only the parts containing hanzi from the output of split_hanzi_nonhanzi
-    '''
-    result = []
-    for i, part in enumerate(text_parts):
-        if i % 2 == 1:
-            result.append(part)
-    return result
-
 def read_frequencies(dictionary, text_parts):
     '''
     Reads the frequencies of the sequence of characters making up each word in the
@@ -68,7 +58,7 @@ def read_frequencies(dictionary, text_parts):
     boundaries, just counts the raw frequency of each string.
     '''
     max_word_length = 20
-    hanzi_parts = get_hanzi_parts(text_parts)
+    hanzi_parts = text_parts[1::2]
     frequencies = collections.Counter()
     for part in hanzi_parts:
         for i in xrange(len(part)):
@@ -147,8 +137,6 @@ def get_words(segmented_text_parts):
     '''
     Returns the words from the output of segment
     '''
-    words = []
-    for part in get_hanzi_parts(segmented_text_parts):
-        for word in part:
-            words.append(word)
-    return words
+    result = []
+    map(result.extend, segmented_text_parts[1::2])
+    return result
