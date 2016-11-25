@@ -39,11 +39,14 @@ def word_counts(args):
         for word, count in counter.most_common():
             words.append((word, count))
     else:
+        total_words = len(output.words)
+        total_subtlex_frequencies = sum(output.subtlex_frequencies.itervalues())
         for word, count in counter.iteritems():
             # we skip words that we don't have frequency data for
             if word in output.subtlex_frequencies:
                 score = float(count) / output.subtlex_frequencies[word]
-                words.append((-score, (word, count)))
+                if score * total_subtlex_frequencies / total_words > args.min_relative_frequency:
+                    words.append((-score, (word, count)))
         words.sort()
         words = map(lambda x: x[1], words)
 
@@ -62,6 +65,7 @@ parser_segment.set_defaults(func=segment)
 parser_counts = subparsers.add_parser('words', help='Print the distinct words occuring in a chinese text along with the count of each word.')
 parser_counts.add_argument('file', metavar='FILE', type=argparse.FileType('r'), help='text file to process')
 parser_counts.add_argument('--min-count', type=int, help='don\'t display words which occur less than this number of times (default 30)', default=30)
+parser_counts.add_argument('--min-relative-frequency', metavar='FREQUENCY', type=float, help='don\'t display words whose frequency in the text is less than this number times their general frequency (default 10.0)', default=10.0)
 parser_counts.add_argument('--sort-by-raw-count', action='store_true', help='sort the words by raw count rather than normalized by general frequency')
 parser_counts.set_defaults(func=word_counts)
 
