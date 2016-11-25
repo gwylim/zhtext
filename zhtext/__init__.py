@@ -78,6 +78,18 @@ def read_frequencies(dictionary, text_parts):
                     frequencies[word] += 1
     return frequencies
 
+def read_subtlex_frequencies():
+    '''
+    Reads word frequency data from SUBTLEX-CH dataset (see
+    https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2880003/)
+    '''
+    freq_data = pkg_resources.resource_stream(__name__, 'data/SUBTLEX-CH-WF')
+    result = {}
+    for line in freq_data.readlines():
+        word, count = line.decode('utf-8').split()[:2]
+        result[word] = int(count)
+    return result
+
 def split_into_words(dictionary, frequencies, text):
     dp = [None for i in xrange(len(text) + 1)]
     lengths = [0 for i in xrange(len(text) + 1)]
@@ -89,7 +101,8 @@ def split_into_words(dictionary, frequencies, text):
             if dp[j] is None:
                 continue
             w = text[j:i]
-            if w not in dictionary:
+            # we allow length 1 non-words in case some characters don't have entries in the dictionary
+            if w not in dictionary and i - j > 1:
                 continue
             if dp[i] is None or lengths[dp[i]] > lengths[j]:
                 dp[i] = j

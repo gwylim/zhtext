@@ -8,9 +8,9 @@ import zhtext
 class Output:
     def __init__(self, fileinput):
         self.text_parts = zhtext.split_hanzi_nonhanzi(fileinput.read().decode('utf-8'))
-        self.dictionary = zhtext.read_dictionary()
-        self.frequencies = zhtext.read_frequencies(self.dictionary, self.text_parts)
-        self.segmented_text = zhtext.segment(self.dictionary, self.frequencies, self.text_parts)
+        self.subtlex_frequencies = zhtext.read_subtlex_frequencies()
+        self.frequencies = zhtext.read_frequencies(self.subtlex_frequencies, self.text_parts)
+        self.segmented_text = zhtext.segment(self.subtlex_frequencies, self.frequencies, self.text_parts)
         self.words = zhtext.get_words(self.segmented_text)
 
 def segment(args):
@@ -28,7 +28,22 @@ def word_counts(args):
     for word in output.words:
         counter[word] += 1
 
-    for word, count in counter.most_common():
+    words = []
+    if args.sort_by_raw_count:
+        for word, count in counter.most_common():
+            words.append((word, count))
+    else:
+        for word, count in counter.iteritems():
+            # we skip words that we don't have frequency data for
+            if word in output.subtlex_frequencies:
+                score = float(count) / output.subtlex_frequencies[word]
+                words.append((-score, (word, count)))
+        words.sort()
+        words = map(lambda x: x[1], words)
+
+    for word, count in words:
+        if count < args.min_count:
+            continue
         sys.stdout.write(("%s %d\n" % (word, count)).encode('utf-8'))
 
 parser = argparse.ArgumentParser()
@@ -38,8 +53,10 @@ parser_segment = subparsers.add_parser('segment', help='Segments the given chine
 parser_segment.add_argument('file', metavar='FILE', type=argparse.FileType('r'), help='text file to segment')
 parser_segment.set_defaults(func=segment)
 
-parser_counts = subparsers.add_parser('counts', help='Print the distinct words occuring in a chinese text along with the count of each word.')
+parser_counts = subparsers.add_parser('words', help='Print the distinct words occuring in a chinese text along with the count of each word.')
 parser_counts.add_argument('file', metavar='FILE', type=argparse.FileType('r'), help='text file to process')
+parser_counts.add_argument('--min-count', type=int, help='don\'t display words which occur less than this number of times', default=30)
+parser_counts.add_argument('--sort-by-raw-count', action='store_true', help='sort the words by raw count rather than normalized by general frequency')
 parser_counts.set_defaults(func=word_counts)
 
 args = parser.parse_args()
