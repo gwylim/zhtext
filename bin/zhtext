@@ -9,7 +9,14 @@ class Output:
     def __init__(self, fileinput):
         self.text_parts = zhtext.split_hanzi_nonhanzi(fileinput.read().decode('utf-8'))
         self.subtlex_frequencies = zhtext.read_subtlex_frequencies()
-        self.segmented_text = zhtext.segment(self.subtlex_frequencies, self.subtlex_frequencies, self.text_parts)
+
+        dictionary = zhtext.read_dictionary()
+        self.dictionary = {}
+        for word in dictionary:
+            if word in self.subtlex_frequencies:
+                self.dictionary[word] = dictionary[word]
+
+        self.segmented_text = zhtext.segment(self.dictionary, self.subtlex_frequencies, self.text_parts)
         self.words = zhtext.get_words(self.segmented_text)
 
 def segment(args):
