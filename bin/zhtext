@@ -55,7 +55,7 @@ parser_segment.set_defaults(func=segment)
 
 parser_counts = subparsers.add_parser('words', help='Print the distinct words occuring in a chinese text along with the count of each word.')
 parser_counts.add_argument('file', metavar='FILE', type=argparse.FileType('r'), help='text file to process')
-parser_counts.add_argument('--min-count', type=int, help='don\'t display words which occur less than this number of times', default=30)
+parser_counts.add_argument('--min-count', type=int, help='don\'t display words which occur less than this number of times (default 30)', default=30)
 parser_counts.add_argument('--sort-by-raw-count', action='store_true', help='sort the words by raw count rather than normalized by general frequency')
 parser_counts.set_defaults(func=word_counts)
 
