@@ -10,4 +10,4 @@ setup(name='zhtext',
       packages=['zhtext'],
       scripts=['bin/zhtext'],
       zip_safe=False,
-      data_files=[('zhtext/data', ['zhtext/data/cedict_1_0_ts_utf-8_mdbg.txt', 'zhtext/data/SUBTLEX-CH-WF'])])
+      package_data={'zhtext': ['data/cedict_1_0_ts_utf-8_mdbg.txt', 'data/SUBTLEX-CH-WF']})
