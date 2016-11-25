@@ -8,7 +8,7 @@ but not common generally.
 
 ## Installing
 
-Run `python setup.py install` to install.
+Run `python setup.py install` to install. This requires having Python 2.
 
 ## Usage
 
