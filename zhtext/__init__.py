@@ -84,7 +84,7 @@ def read_subtlex_frequencies():
     https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2880003/)
     '''
     freq_data = pkg_resources.resource_stream(__name__, 'data/SUBTLEX-CH-WF')
-    result = {}
+    result = collections.defaultdict(lambda: 1)
     for line in freq_data.readlines():
         word, count = line.decode('utf-8').split()[:2]
         result[word] = int(count)
